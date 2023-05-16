@@ -1,0 +1,3 @@
+interface Pneu {
+  void fabricar();
+}

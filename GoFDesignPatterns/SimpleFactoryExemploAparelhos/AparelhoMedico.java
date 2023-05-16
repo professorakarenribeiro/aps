@@ -1,0 +1,3 @@
+interface AparelhoMedico {
+  void monitorarParametro();
+}
