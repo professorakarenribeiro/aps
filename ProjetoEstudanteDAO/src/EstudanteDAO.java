@@ -1,15 +1,16 @@
+// Esta é a interface DAO da classe conceitual de Estudante
 
-// Interface DAO de Estudante
+//imports Java
 import java.util.ArrayList;
 
 public interface EstudanteDAO {
     void inserir(Estudante estudante);
 
-    Estudante buscarPorRGA(String RGA);
-
-    ArrayList<Estudante> buscarTodos();
+    void atualizar(Estudante estudante, String nome);
 
     void excluir(String RGA);
 
-    void atualizar(Estudante estudante, String nome);
+    Estudante buscarPorRGA(String RGA);
+
+    ArrayList<Estudante> buscarTodos();
 }
