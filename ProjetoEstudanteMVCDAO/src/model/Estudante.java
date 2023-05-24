@@ -1,7 +1,8 @@
+// Esta é a classe conceitual de Estudante e faz parte do Model
 package model;
 
 public class Estudante {
-    String nome, RGA;
+    private String nome, RGA;
 
     public Estudante(String nome, String RGA) {
         this.setNome(nome);

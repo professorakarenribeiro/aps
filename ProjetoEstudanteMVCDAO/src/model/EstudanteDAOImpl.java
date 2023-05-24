@@ -1,92 +1,54 @@
+// Esta é a classe DAO de Estudante JDBC e faz parte do Model
 package model;
 
-import java.util.ArrayList;
+//imports Java
 import java.sql.*;
+import java.util.ArrayList;
 
 public class EstudanteDAOImpl implements EstudanteDAO {
 
     public Connection conexao;
 
     public EstudanteDAOImpl(Connection conexao) {
-        this.conexao = conexao;
+        this.conexao = conexao; // conexão com Banco
     }
 
+    // implementação dos métodos da interface EstudanteDAO para JDBC/SQL
     @Override
     public void inserir(Estudante estudante) {
-        // Lógica para inserir um estudante no banco de dados
-        String inserirRegistro = "INSERT INTO estudantes (estudanteNome, estudanteRGA) values (?,?)";
-
+        String inserir = "INSERT INTO estudantes (estudanteNome, estudanteRGA) values (?,?)";
         try {
-            PreparedStatement statementInserirRegistro = this.conexao.prepareStatement(inserirRegistro);
+            PreparedStatement statementInserir = this.conexao.prepareStatement(inserir);
 
-            statementInserirRegistro.setString(1, estudante.getNome());
-            statementInserirRegistro.setString(2, estudante.getRGA());
-            statementInserirRegistro.executeUpdate();
-
-            System.out.println("Novo registro de estudante inserido com sucesso!");
+            statementInserir.setString(1, estudante.getNome());
+            statementInserir.setString(2, estudante.getRGA());
+            statementInserir.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public ArrayList<Estudante> buscarTodos() {
-        // Lógica para buscar todos os estudantes do banco de dados
-        String mostrarTodosRegistros = "SELECT * FROM estudantes";
-        ArrayList<Estudante> listaEstudantes = new ArrayList<Estudante>();
-        ;
+    public void atualizar(Estudante estudante, String nome) {
+        String atualizar = "UPDATE estudantes SET estudanteNome=? WHERE estudanteRGA=?";
         try {
-            Statement statementTodosRegistros = this.conexao.createStatement();
-            ResultSet registros = statementTodosRegistros.executeQuery(mostrarTodosRegistros);
-
-            while (registros.next()) {
-                Estudante est = new Estudante(registros.getString("estudanteNome"),
-                        registros.getString("estudanteRGA"));
-                listaEstudantes.add(est);
-            }
-
-            System.out.println("Lista de estudantes retornada com sucesso!");
+            PreparedStatement statementAtualizar = this.conexao.prepareStatement(atualizar);
+            statementAtualizar.setString(1, nome);
+            statementAtualizar.setString(2, estudante.getRGA());
+            statementAtualizar.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return listaEstudantes;
-    }
-
-    @Override
-    public Estudante buscarPorRGA(String RGA) {
-        // Lógica para excluir um estudante do banco de dados por RGA
-        String buscarRegistro = "SELECT * FROM estudantes WHERE estudanteRGA=" + RGA;
-        Estudante est = null;
-
-        try {
-            Statement statementBuscarRegistro = this.conexao.createStatement();
-            ResultSet registros = statementBuscarRegistro.executeQuery(buscarRegistro);
-
-            if (registros.next()) {
-                est = new Estudante(registros.getString("estudanteNome"), registros.getString("estudanteRGA"));
-                System.out.println("Registro de estudante encontrado com sucesso!");
-            } else {
-                System.out.println("Estudante não encontrado.");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return est;
     }
 
     @Override
     public void excluir(String RGA) {
-        // Lógica para excluir um estudante do banco de dados por RGA
-        Estudante est = this.buscarPorRGA(RGA);
-
-        if (est != null) {
-            System.out.println("Excluindo estudante...");
-            String excluirRegistro = "DELETE FROM estudantes WHERE estudanteRGA=" + RGA;
+        Estudante estudante = this.buscarPorRGA(RGA);
+        if (estudante != null) {
+            String excluir = "DELETE FROM estudantes WHERE estudanteRGA=" + RGA;
             try {
-                PreparedStatement statementExcluirRegistro = this.conexao.prepareStatement(excluirRegistro);
-                statementExcluirRegistro.executeUpdate();
-                System.out.println("Estudante excluído com sucesso!");
+                PreparedStatement statementExcluir = this.conexao.prepareStatement(excluir);
+                statementExcluir.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -94,19 +56,38 @@ public class EstudanteDAOImpl implements EstudanteDAO {
     }
 
     @Override
-    public void atualizar(Estudante estudante, String nome) {
-        // Lógica para atualizar um estudante no banco de dados
-        String atualizarRegistro = "UPDATE estudantes SET estudanteNome=? WHERE estudanteRGA=?";
+    public Estudante buscarPorRGA(String RGA) {
+        String buscarPorRGA = "SELECT * FROM estudantes WHERE estudanteRGA=" + RGA;
+        Estudante estudante = null;
         try {
-            PreparedStatement statementAtualizarRegistro = this.conexao.prepareStatement(atualizarRegistro);
-            statementAtualizarRegistro.setString(1, nome);
-            statementAtualizarRegistro.setString(2, estudante.getRGA());
-            statementAtualizarRegistro.executeUpdate();
-            System.out.println("Estudante atualizado com sucesso!");
+            Statement statementBuscarPorRGA = this.conexao.createStatement();
+            ResultSet registros = statementBuscarPorRGA.executeQuery(buscarPorRGA);
+            if (registros.next()) {
+                estudante = new Estudante(registros.getString("estudanteNome"), registros.getString("estudanteRGA"));
+            } else {
+                System.out.println("Estudante não encontrado.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return estudante;
     }
 
+    @Override
+    public ArrayList<Estudante> buscarTodos() {
+        String buscarTodos = "SELECT * FROM estudantes";
+        ArrayList<Estudante> listaEstudantes = new ArrayList<Estudante>();
+        try {
+            Statement statementBuscarTodos = this.conexao.createStatement();
+            ResultSet registros = statementBuscarTodos.executeQuery(buscarTodos);
+            while (registros.next()) {
+                Estudante estudante = new Estudante(registros.getString("estudanteNome"),
+                        registros.getString("estudanteRGA"));
+                listaEstudantes.add(estudante);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listaEstudantes;
+    }
 }

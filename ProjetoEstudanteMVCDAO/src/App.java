@@ -1,13 +1,11 @@
-import java.sql.*; // importa a biblioteca SQL
-import java.util.ArrayList;
+// imports Java
+import java.sql.*;
 
-import controller.EstudanteController;
-import model.*;
-import view.EstudanteView;
+import controller.EstudanteController; // import da Controladora
 
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, Meu projeto JDBC!");
+        System.out.println("Hello, Meu projeto MVC + DAO via JDBC!");
 
         // organizar seus dados de conexão em strings é uma boa ideia!
         String mySQLURL = "jdbc:mysql://localhost:3306/BDalg3"; // informar o nome do banco no final da URL é opcional
@@ -19,12 +17,9 @@ public class App {
 
             if (conexao != null) {
                 System.out.println("Conectado com sucesso à instância MySQL!");
-
-                EstudanteDAOImpl estudanteDAO = new EstudanteDAOImpl(conexao);
-                EstudanteView estudanteView = new EstudanteView();
-                EstudanteController estudanteController = new EstudanteController(conexao, estudanteDAO, estudanteView);
-
             }
+
+            EstudanteController estudanteController = new EstudanteController(conexao); // inicialização da controladora com a conexão do banco
 
             conexao.close(); // fecha a conexão com o banco - sempre fechar após o uso!
 
